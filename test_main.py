@@ -1,7 +1,8 @@
 from fastapi.testclient import TestClient
 import re
-from main import app  # or whatever your app module is
-
+from app.main import app
+#from main import app  # or whatever your app module is
+# hellow try to do it
 client = TestClient(app)
 
 def test_basic_division():

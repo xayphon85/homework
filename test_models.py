@@ -1,11 +1,20 @@
 import pytest
 #from calculator import expand_percent  # import your function
 from models import Expression
-
+from app.dependencies import expand_percent
+"""
 def test_add_percent():
-    """Test addition where B% means 'B percent of A'."""
+    #Test addition where B% means 'B percent of A'.
     e = Expression(expr="5 + 10%")
     assert e.expand_percent() == "5 + ((10/100)*5)"
+"""
+    # test_models.py  (rewrite to test the function)
+
+
+def test_add_percent():
+    assert expand_percent("5 + 10%") == "5 + ((10/100)*5)"
+# ...and keep the rest the same pattern
+
 
 def test_subtract_percent():
     """Test subtraction where B% means 'B percent of A'."""

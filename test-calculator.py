@@ -1,4 +1,6 @@
-from calculator import expand_percent
+#from calculator import expand_percent
+# test-calculator.py
+from app.dependencies import expand_percent
 
 def test_expand_percent():
     assert expand_percent("5 + 10%") == "5 + ((10/100)*5)", (
