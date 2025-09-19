@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 import re
-from main import app  # or whatever your app module is
+from app.main import app  # Updated import path
 
 client = TestClient(app)
 
