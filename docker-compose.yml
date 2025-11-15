@@ -1,16 +1,21 @@
+version: "3.9"
+
 services:
   web:
     container_name: calculator_server_web
     build: .
     restart: unless-stopped
     ports:
-      - "7002:80"                    # http://localhost:7001
+      # Maps host port 7002 to container port 80
+      - "7002:80" 
     volumes:
-      - .:/app                       # dev hot-reload
+      # Mounts the current directory (backend code) into the container for hot-reload
+      - .:/app 
     environment:
+      # Ensure 'mysql' hostname matches the service name below
       - DATABASE_URL=mysql+pymysql://root:password@mysql:3306/calculator_server
-      - PYTHONPATH=/app          # <<< add this
-    #   - WATCHFILES_FORCE_POLLING=true # more reliable reload on Docker Desktop/macOS
+      # Allows Python to find modules in the mounted /app directory
+      - PYTHONPATH=/app 
     # command: uvicorn src.app.main:app --host 0.0.0.0 --port 80 --reload --reload-dir src
     depends_on:
       mysql:
@@ -18,18 +23,33 @@ services:
     networks:
       - app-network
 
+  # frontend:
+  #   # Build context points to the 'calculator-app' subdirectory
+  #   build: ../calculator-app
+  #   ports:
+  #     # Maps host port 3000 to container port 80 (common for React/NGINX in Docker)
+  #     - "3000:80"
+  #   # Depends on the backend API ('web') to be running
+  #   depends_on:
+  #     - web 
+  #   networks:
+  #     - app-network
+
   mysql:
     container_name: calculator_server_mysql
     image: mysql:8.0
     restart: unless-stopped
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=calculator_server  
-      - MYSQL_USER=calculator_server  # user
-      - MYSQL_PASSWORD=1234QWEasz     # password 
+      # NOTE: It's best practice to use a secret for the root password, not 'password'
+      - MYSQL_ROOT_PASSWORD=password 
+      - MYSQL_DATABASE=calculator_server 
+      - MYSQL_USER=calculator_server 
+      - MYSQL_PASSWORD=1234QWEasz
     ports:
-      - "7102:3306"                  # host access: localhost:7101
+      # Maps host port 7102 for direct host access (e.g., a GUI tool)
+      - "7102:3306"
     volumes:
+      # Persists the MySQL data on your host machine
       - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -ppassword --silent"]
@@ -44,8 +64,10 @@ services:
     image: phpmyadmin:latest
     restart: unless-stopped
     ports:
-      - "7202:80"                    # http://localhost:7201
+      # Maps host port 7202 for accessing phpMyAdmin in your browser
+      - "7202:80" 
     environment:
+      # PMA_HOST must match the database service name
       - PMA_HOST=mysql
       - PMA_PORT=3306
       - PMA_ARBITRARY=0
