@@ -1,0 +1,64 @@
+services:
+  web:
+    container_name: calculator_server_web
+    build: .
+    restart: unless-stopped
+    ports:
+      - "7002:80"                    # http://localhost:7001
+    volumes:
+      - .:/app                       # dev hot-reload
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:password@mysql:3306/calculator_server
+      - PYTHONPATH=/app          # <<< add this
+    #   - WATCHFILES_FORCE_POLLING=true # more reliable reload on Docker Desktop/macOS
+    # command: uvicorn src.app.main:app --host 0.0.0.0 --port 80 --reload --reload-dir src
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  mysql:
+    container_name: calculator_server_mysql
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=calculator_server  
+      - MYSQL_USER=calculator_server  # user
+      - MYSQL_PASSWORD=1234QWEasz     # password 
+    ports:
+      - "7102:3306"                  # host access: localhost:7101
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -ppassword --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - app-network
+
+  phpmyadmin:
+    container_name: calculator_server_pma
+    image: phpmyadmin:latest
+    restart: unless-stopped
+    ports:
+      - "7202:80"                    # http://localhost:7201
+    environment:
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
+      - PMA_ARBITRARY=0
+      - UPLOAD_LIMIT=256M
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data: {}

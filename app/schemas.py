@@ -21,3 +21,19 @@ class CalculatorLog(ExpressionIn):
 
 # Alias per the practice guideline
 ExpressionOut = CalculatorLog
+
+# ---- Session ----
+class SessionInfo(BaseModel):
+    """Session information."""
+    id: int
+    name: str | None
+    started_at: str
+    ended_at: str | None
+    
+    class Config:
+        from_attributes = True
+
+
+class SessionNameUpdate(BaseModel):
+    """Request to update session name."""
+    name: str

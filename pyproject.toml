@@ -1,0 +1,34 @@
+[project]
+name = "calculator-server"
+version = "0.1.0"
+description = "FastAPI + SQLAlchemy + MySQL backend for Calculator Server"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "SQLAlchemy>=2.0",
+    "pymysql",
+    "cryptography",
+    "python-dotenv",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.4",
+    "asteval",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
